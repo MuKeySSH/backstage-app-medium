@@ -28,8 +28,17 @@ backend:
   # This is for local development only, it is not recommended to use this in production
   # The production database configuration is stored in app-config.production.yaml
   database:
-    client: better-sqlite3
-    connection: ':memory:'
+    client: pg
+    pluginDivisionMode: schema
+    connection:
+      host: ${POSTGRES_HOST}
+      port: ${POSTGRES_PORT}
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      database: backstage
+      ssl:
+        require: true
+        rejectUnauthorized: true
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -56,11 +65,16 @@ proxy:
 # and an external cloud storage when deploying TechDocs for production use-case.
 # https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
 techdocs:
-  builder: 'local' # Alternatives - 'external'
+  builder: external
   generator:
-    runIn: 'docker' # Alternatives - 'local'
+    runIn: local
   publisher:
-    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+    type: 'azureBlobStorage'
+    azureBlobStorage:
+      containerName: 'backstage-techdocs'
+      credentials:
+        accountName: ${TECHDOCS_AZURE_BLOB_STORAGE_ACCOUNT_NAME}
+        accountKey: ${TECHDOCS_AZURE_BLOB_STORAGE_ACCOUNT_KEY}
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
@@ -78,21 +92,19 @@ catalog:
   rules:
     - allow: [Component, System, API, Resource, Location]
   locations:
-    # Local example data, file locations are relative to the backend process, typically `packages/backend`
-    - type: file
-      target: ../../examples/entities.yaml
-
-    # Local example template
-    - type: file
-      target: ../../examples/template/template.yaml
+    - type: url
+      target: https://github.com/susovanpanja/backstage-app-medium/blob/main/examples/entities.yaml 
+    - type: url
+      target: https://github.com/susovanpanja/backstage-app-medium/blob/main/examples/template/template.yaml
       rules:
-        - allow: [Template]
-
-    # Local example organizational data
-    - type: file
-      target: ../../examples/org.yaml
+        - allow:
+            - Template
+    - type: url
+      target: https://github.com/susovanpanja/backstage-app-medium/blob/main/examples/org.yaml
       rules:
-        - allow: [User, Group]
+        - allow:
+            - User
+            - Group
 
     ## Uncomment these lines to add more example data
     # - type: url
