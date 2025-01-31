@@ -1,7 +1,7 @@
 ---
-id: cli-overview
-title: Overview
-description: Overview of the Backstage CLI
+ID: cli-overview
+Title: Overview
+Description: Overview of the Backstage CLI
 ---
 
 ## Introduction
