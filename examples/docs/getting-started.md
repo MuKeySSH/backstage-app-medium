@@ -1,7 +1,7 @@
 ---
-id: getting-started
-title: Getting Started
-description: Documentation on How to get started with Backstage
+ID: getting-started
+Title: Getting Started
+Description: Documentation on How to get started with Backstage
 ---
 
 For most Backstage installations, installing the standalone app will bring you
